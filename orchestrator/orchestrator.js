@@ -2,16 +2,14 @@ const reviewAgent = require("../agents/review-agent");
 const testAgent = require("../agents/test-agent");
 const securityAgent = require("../agents/security-agent");
 const deployAgent = require("../agents/deploy-agent");
-const metrics = require("../backend/metrics");
 const monitorAgent = require("../agents/monitor-agent");
 const recoveryAgent = require("../agents/recovery-agent");
 
-const metrics = require("../backend/metrics"); // 👈 ADD THIS AT TOP
+// Removed duplicate metrics declaration
+const metrics = require("../backend/metrics"); 
 
 async function runPipeline(repo, commit) {
-
     const startTime = Date.now();
-
     console.log("Running AI Swarm...");
 
     const [review, test, security] = await Promise.all([
@@ -21,17 +19,12 @@ async function runPipeline(repo, commit) {
     ]);
 
     if (review.approved && test.passed && security.safe) {
-
         const deployment = await deployAgent.deploy(repo);
-
         const health = await monitorAgent.checkHealth();
 
         if (!health.healthy) {
-
             const recoveryStart = Date.now();
-
             const recovery = await recoveryAgent.recover();
-
             const recoveryTime = (Date.now() - recoveryStart) / 1000;
 
             metrics.recordRecovery(recoveryTime);
@@ -58,3 +51,6 @@ async function runPipeline(repo, commit) {
         status: "FAILED ❌"
     };
 }
+
+// EXPORT REQUIRED for backend/server.js to use it!
+module.exports = { runPipeline };
