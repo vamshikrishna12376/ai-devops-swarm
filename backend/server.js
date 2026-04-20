@@ -10,7 +10,11 @@ const orchestrator = require("../orchestrator/orchestrator");
 app.get("/", (req, res) => {
     res.send("AI DevOps Swarm Running 🚀");
 });
+const metrics = require("./metrics");
 
+app.get("/metrics", (req, res) => {
+    res.json(metrics.getMetrics());
+});
 app.post("/trigger", async (req, res) => {
     const { repo, commit } = req.body;
 

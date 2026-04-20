@@ -6,6 +6,7 @@ function App() {
 
   const triggerPipeline = async () => {
     setLoading(true);
+<button onClick={fetchMetrics}>View Metrics</button>
 
     const res = await fetch("http://localhost:3000/trigger", {
       method: "POST",
@@ -19,7 +20,11 @@ function App() {
     setResult(data);
     setLoading(false);
   };
-
+const fetchMetrics = async () => {
+  const res = await fetch("http://localhost:3000/metrics");
+  const data = await res.json();
+  setMetrics(data);
+};
   return (
     <div style={{ padding: "30px", fontFamily: "Arial" }}>
       <h1>🚀 AI DevOps Swarm Dashboard</h1>
@@ -63,5 +68,14 @@ const card = {
   borderRadius: "10px",
   background: "#f9f9f9",
 };
+<button onClick={fetchMetrics}>View Metrics</button>
 
+{metrics && (
+  <div style={card}>
+    <h3>📊 Metrics</h3>
+    <p>Total Runs: {metrics.totalRuns}</p>
+    <p>Success Rate: {metrics.successRate}</p>
+    <p>MTAR: {metrics.MTAR}</p>
+  </div>
+)}
 export default App;

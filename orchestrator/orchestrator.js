@@ -2,11 +2,15 @@ const reviewAgent = require("../agents/review-agent");
 const testAgent = require("../agents/test-agent");
 const securityAgent = require("../agents/security-agent");
 const deployAgent = require("../agents/deploy-agent");
-
+const metrics = require("../backend/metrics");
 const monitorAgent = require("../agents/monitor-agent");
 const recoveryAgent = require("../agents/recovery-agent");
 
+const metrics = require("../backend/metrics"); // 👈 ADD THIS AT TOP
+
 async function runPipeline(repo, commit) {
+
+    const startTime = Date.now();
 
     console.log("Running AI Swarm...");
 
@@ -20,11 +24,18 @@ async function runPipeline(repo, commit) {
 
         const deployment = await deployAgent.deploy(repo);
 
-        // 🧠 Monitor after deployment
         const health = await monitorAgent.checkHealth();
 
         if (!health.healthy) {
+
+            const recoveryStart = Date.now();
+
             const recovery = await recoveryAgent.recover();
+
+            const recoveryTime = (Date.now() - recoveryStart) / 1000;
+
+            metrics.recordRecovery(recoveryTime);
+            metrics.recordSuccess();
 
             return {
                 status: "RECOVERED 🔧",
@@ -33,16 +44,17 @@ async function runPipeline(repo, commit) {
             };
         }
 
+        metrics.recordSuccess();
+
         return {
             status: "DEPLOYED & HEALTHY ✅",
             deployment
         };
     }
 
+    metrics.recordFailure();
+
     return {
-        status: "FAILED ❌",
-        details: { review, test, security }
+        status: "FAILED ❌"
     };
 }
-
-module.exports = { runPipeline };
