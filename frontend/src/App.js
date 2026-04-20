@@ -3,7 +3,7 @@ import React, { useState } from "react";
 function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [metrics, setMetrics] = useState(null); // Added missing state
+  const [metrics, setMetrics] = useState(null); // 👈 Added missing state
 
   const triggerPipeline = async () => {
     setLoading(true);
@@ -20,7 +20,7 @@ function App() {
       const data = await res.json();
       setResult(data);
     } catch (error) {
-      console.error("Pipeline trigger failed:", error);
+      console.error("Failed to trigger pipeline", error);
     } finally {
       setLoading(false);
     }
@@ -32,7 +32,7 @@ function App() {
       const data = await res.json();
       setMetrics(data);
     } catch (error) {
-      console.error("Failed to fetch metrics:", error);
+      console.error("Failed to fetch metrics", error);
     }
   };
 
@@ -43,8 +43,9 @@ function App() {
       <button onClick={triggerPipeline} style={btn}>
         Run Pipeline
       </button>
-      
-      <button onClick={fetchMetrics} style={{...btn, marginLeft: '10px', background: '#007bff', color: 'white'}}>
+
+      {/* 👈 Moved View Metrics button here, inside the return statement */}
+      <button onClick={fetchMetrics} style={{ ...btn, marginLeft: '10px' }}>
         View Metrics
       </button>
 
@@ -53,27 +54,21 @@ function App() {
       {result && (
         <div style={card}>
           <h2>Status: {result.status}</h2>
-
-          {result.deployment && (
-            <p>🌐 URL: <a href={result.deployment.url} target="_blank" rel="noreferrer">{result.deployment.url}</a></p>
-          )}
-
+          {result.deployment && <p>🌐 URL: {result.deployment.url}</p>}
           {result.recovery && (
             <p>🔧 Recovery: {result.recovery.recovered ? "Success" : "Failed"}</p>
           )}
-
-          <pre style={{ textAlign: "left", background: "#eee", padding: "10px" }}>
-            {JSON.stringify(result, null, 2)}
-          </pre>
+          <pre>{JSON.stringify(result, null, 2)}</pre>
         </div>
       )}
 
+      {/* 👈 Moved metrics UI here, inside the return statement */}
       {metrics && (
         <div style={card}>
           <h3>📊 Metrics</h3>
           <p>Total Runs: {metrics.totalRuns}</p>
           <p>Success Rate: {metrics.successRate}</p>
-          <p>Mean Time to Recovery (MTAR): {metrics.MTAR}</p>
+          <p>MTAR: {metrics.MTAR}</p>
         </div>
       )}
     </div>
@@ -85,8 +80,6 @@ const btn = {
   fontSize: "16px",
   marginTop: "10px",
   cursor: "pointer",
-  borderRadius: "5px",
-  border: "1px solid #ccc"
 };
 
 const card = {

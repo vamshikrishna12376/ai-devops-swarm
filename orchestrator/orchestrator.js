@@ -5,7 +5,7 @@ const deployAgent = require("../agents/deploy-agent");
 const monitorAgent = require("../agents/monitor-agent");
 const recoveryAgent = require("../agents/recovery-agent");
 
-// Removed duplicate metrics declaration
+// 👈 Removed the duplicate metrics import
 const metrics = require("../backend/metrics"); 
 
 async function runPipeline(repo, commit) {
@@ -52,5 +52,5 @@ async function runPipeline(repo, commit) {
     };
 }
 
-// EXPORT REQUIRED for backend/server.js to use it!
+// 👈 ADDED THIS: You must export the function so the server can use it!
 module.exports = { runPipeline };
