@@ -1,0 +1,10 @@
+{
+  "totalRuns": 3,
+  "success": 3,
+  "failures": 0,
+  "recoveryTimes": [
+    0.474,
+    0.028,
+    10.336
+  ]
+}
