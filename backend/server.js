@@ -38,16 +38,28 @@ app.post("/trigger", async (req, res) => {
 });
 
 // 🔗 GITHUB WEBHOOK
-app.post("/webhook", async (req, res) => {
+app.post("/webhook", (req, res) => {
   try {
     addLog("🔥 GitHub Webhook Triggered");
 
     const repo = req.body.repository?.name || "unknown";
     const commit = req.body.head_commit?.id || "latest";
 
-    const result = await orchestrator.runPipeline(repo, commit);
+    res.status(202).json({
+      message: "Webhook received. Pipeline started.",
+      repo,
+      commit,
+    });
 
-    res.json({ message: "Pipeline triggered", result });
+    orchestrator
+      .runPipeline(repo, commit)
+      .then((result) => {
+        addLog(`✅ Webhook pipeline finished: ${result.status}`);
+      })
+      .catch((err) => {
+        console.error(err);
+        addLog("❌ Webhook pipeline error");
+      });
   } catch (err) {
     console.error(err);
     addLog("❌ Webhook error");
