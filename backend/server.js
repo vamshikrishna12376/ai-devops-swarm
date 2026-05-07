@@ -10,19 +10,7 @@ const orchestrator = require("../orchestrator/orchestrator");
 
 // 📊 IMPORT METRICS
 const metrics = require("./metrics");
-
-// 🧾 LOG STORAGE
-let logs = [];
-
-// ➕ ADD LOG FUNCTION
-function addLog(message) {
-  logs.push({
-    time: new Date().toLocaleTimeString(),
-    message,
-  });
-
-  if (logs.length > 50) logs.shift(); // keep last 50 logs
-}
+const { addLog, getLogs } = require("./logs");
 
 // 🌐 ROOT
 app.get("/", (req, res) => {
@@ -75,7 +63,7 @@ app.get("/metrics", (req, res) => {
 
 // 🧾 LOGS API
 app.get("/logs", (req, res) => {
-  res.json(logs);
+  res.json(getLogs());
 });
 
 // ❌ GLOBAL ERROR HANDLER
