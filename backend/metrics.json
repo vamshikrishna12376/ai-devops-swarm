@@ -1,6 +1,6 @@
 {
-  "totalRuns": 28,
-  "success": 28,
+  "totalRuns": 29,
+  "success": 29,
   "failures": 0,
   "recoveryTimes": [
     0.474,
@@ -29,6 +29,7 @@
     0.23,
     10.226,
     10.427,
-    10.323
+    10.323,
+    10.254
   ]
 }
